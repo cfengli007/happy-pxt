@@ -8,6 +8,10 @@ kv_namespaces = [
 ]
 
 [vars]
+# Email configuration
+SENDER_EMAIL = "${SENDER_EMAIL}" # 发送邮件的邮箱地址
+VERIFICATION_EMAIL = "${VERIFICATION_EMAIL}" # 发送验证码的邮箱地址
+
 # You can define environment variables here if needed, but secrets are better for sensitive data
 
 # Cron Triggers configuration

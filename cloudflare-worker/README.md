@@ -1,192 +1,192 @@
-# Birthday Email Scheduler - Cloudflare Worker
+# 生日邮件定时发送服务 - Cloudflare Worker
 
-This Cloudflare Worker schedules and sends emails at a future date, intended for a "write a message to your future self" feature for a birthday website.
+该Cloudflare Worker用于在未来指定日期发送邮件，适用于生日网站的"给未来的自己写封信"功能。
 
-It uses:
-- Cloudflare Workers for serverless compute.
-- Cloudflare KV for storing scheduled email data.
-- Cloudflare Cron Triggers for periodically checking and sending emails.
-- Resend (or a similar email service) for actual email delivery.
-- Basic data encryption for messages stored in KV (placeholder, **needs robust implementation**).
+使用技术：
+- Cloudflare Workers 无服务器计算
+- Cloudflare KV 存储定时邮件数据
+- Cloudflare Cron Triggers 定期检查并发送邮件
+- Resend（或类似邮件服务）用于实际邮件发送
+- KV中存储消息的基础加密（占位符，**需要完善实现**）
 
-## Project Structure
+## 项目结构
 
 ```
 cloudflare-worker/
 ├── .gitignore
 ├── package.json
 ├── README.md
-├── wrangler.toml         # Wrangler configuration file
+├── wrangler.toml         # Wrangler配置文件
 └── src/
-    └── index.js          # Main Worker script
+    └── index.js          # Worker主脚本
 ```
 
-## Prerequisites
+## 前置条件
 
-1.  **Cloudflare Account**: Sign up at [Cloudflare](https://cloudflare.com).
-2.  **Node.js and npm**: Install from [nodejs.org](https://nodejs.org/).
-3.  **Wrangler CLI**: Cloudflare's command-line tool for Workers. Install globally:
+1.  **Cloudflare账号**：在[Cloudflare](https://cloudflare.com)注册
+2.  **Node.js和npm**：从[nodejs.org](https://nodejs.org/)安装
+3.  **Wrangler CLI**：Cloudflare的Worker命令行工具。全局安装：
     ```bash
     npm install -g wrangler
     ```
-4.  **Resend Account**: Sign up at [Resend.com](https://resend.com) and get an API key. You'll also need a verified sending domain.
+4.  **Resend账号**：在[Resend.com](https://resend.com)注册并获取API密钥，同时需要已验证的发送域名
 
-## Setup Instructions
+## 安装指南
 
-1.  **Clone the repository (or create these files in your existing project).**
+1.  **克隆仓库（或在现有项目中创建这些文件）**
 
-2.  **Navigate to the `cloudflare-worker` directory:**
+2.  **进入`cloudflare-worker`目录**：
     ```bash
     cd path/to/your/project/cloudflare-worker
     ```
 
-3.  **Install dependencies (Wrangler for local development/deployment):**
+3.  **安装依赖（用于本地开发/部署的Wrangler）**：
     ```bash
     npm install
     ```
 
-4.  **Configure `wrangler.toml`:**
-    *   Open `wrangler.toml`.
-    *   Replace `YOUR_ACCOUNT_ID` with your actual Cloudflare Account ID. You can find this in your Cloudflare dashboard.
-    *   The `name` field (`birthday-email-scheduler`) will be the name of your Worker service.
+4.  **配置`wrangler.toml`**：
+    *   打开`wrangler.toml`
+    *   将`YOUR_ACCOUNT_ID`替换为实际的Cloudflare账号ID（可在Cloudflare仪表板中找到）
+    *   `name`字段（`birthday-email-scheduler`）将是Worker服务的名称
 
-5.  **Create a KV Namespace:**
-    *   Run the following command. Replace `SCHEDULED_EMAILS_KV` if you used a different binding name in `wrangler.toml`.
+5.  **创建KV命名空间**：
+    *   运行以下命令。如果在`wrangler.toml`中使用了不同的绑定名称，请替换`SCHEDULED_EMAILS_KV`
         ```bash
         npx wrangler kv:namespace create SCHEDULED_EMAILS_KV
         ```
-    *   Wrangler will output an `id` for the namespace. Copy this ID.
-    *   Paste the copied `id` into `wrangler.toml` for the `SCHEDULED_EMAILS_KV` binding, replacing `YOUR_KV_NAMESPACE_ID`.
+    *   Wrangler会输出命名空间的`id`，复制此ID
+    *   将复制的`id`粘贴到`wrangler.toml`中的`SCHEDULED_EMAILS_KV`绑定，替换`YOUR_KV_NAMESPACE_ID`
 
-6.  **Set up Secrets for Resend API Key and Encryption:**
-    *   **RESEND_API_KEY**: Your API key from Resend.
+6.  **设置Resend API密钥和加密密钥**：
+    *   **RESEND_API_KEY**：来自Resend的API密钥
         ```bash
         npx wrangler secret put RESEND_API_KEY
         ```
-        (Wrangler will prompt you to enter the secret value.)
-    *   **ENCRYPTION_SECRET**: A strong, unique secret string for encrypting/decrypting data in KV. Generate a secure random string for this.
+        （Wrangler会提示输入密钥值）
+    *   **ENCRYPTION_SECRET**：用于KV数据加密/解密的强唯一密钥字符串。生成安全的随机字符串
         ```bash
         npx wrangler secret put ENCRYPTION_SECRET
         ```
-        **Important**: The current encryption in `src/index.js` is a placeholder. For production, you MUST implement robust encryption using the Web Crypto API or a library like `encrypt-workers-kv`.
+        **重要**：`src/index.js`中的当前加密是占位符。生产环境必须使用Web Crypto API或类似`encrypt-workers-kv`的库实现强加密
 
-7.  **Update Email `from` Address:**
-    *   In `src/index.js`, find the line:
-        `from: 'Birthday Wishes <onboarding@resend.dev>', // TODO: Replace with your verified Resend domain/email`
-    *   Replace `'onboarding@resend.dev'` with an email address from a domain you have verified with Resend.
+7.  **更新邮件`from`地址**：
+    *   在`src/index.js`中找到以下行：
+        `from: 'Birthday Wishes <onboarding@resend.dev>', // TODO: 替换为你已验证的Resend域名/邮箱`
+    *   将`'onboarding@resend.dev'`替换为你在Resend中已验证域名的邮箱地址
 
-## Local Development
+## 本地开发
 
-To run the Worker locally for testing the `/schedule-email` endpoint:
+要本地运行Worker测试`/schedule-email`端点：
 
 ```bash
 npm start
-# or
+# 或
 npx wrangler dev
 ```
 
-This will start a local server, typically at `http://localhost:8787`.
+这将启动本地服务器，通常地址为`http://localhost:8787`
 
-*   **KV in local dev**: Wrangler will use a local emulation for KV. Data stored locally will not persist to the deployed KV namespace unless you explicitly publish it.
-*   **Secrets in local dev**: Wrangler will prompt you to enter secrets for local development if they are not already in a `.dev.vars` file (which is gitignored).
-*   **Cron Triggers**: Local testing of cron triggers can be done by manually hitting the `/__scheduled` endpoint that `wrangler dev` exposes, or by deploying and observing logs.
+*   **本地开发中的KV**：Wrangler会使用本地模拟KV。本地存储的数据不会自动同步到部署的KV命名空间，除非显式发布
+*   **本地开发中的密钥**：如果密钥未在`.dev.vars`文件中（该文件被git忽略），Wrangler会提示输入本地开发所需的密钥
+*   **Cron触发器**：可以通过手动访问`wrangler dev`暴露的`/__scheduled`端点测试cron触发器，或通过部署后观察日志
 
-## Deployment
+## 部署
 
-To deploy your Worker to Cloudflare:
+将Worker部署到Cloudflare：
 
 ```bash
 npm run deploy
-# or
+# 或
 npx wrangler deploy
 ```
 
-After deployment, your Worker will be live at `https://birthday-email-scheduler.<YOUR_SUBDOMAIN>.workers.dev` (or your custom domain if configured).
+部署后，Worker将在`https://birthday-email-scheduler.<YOUR_SUBDOMAIN>.workers.dev`上线（如果配置了自定义域名则使用自定义域名）
 
-The cron trigger defined in `wrangler.toml` (`0 * * * *` - every hour) will automatically start running on the deployed Worker.
+`wrangler.toml`中定义的cron触发器（`0 * * * *` - 每小时）将在部署的Worker上自动运行
 
-## API Endpoint
+## API端点
 
-*   **`POST /schedule-email`**: Schedules an email.
-    *   **Request Body (JSON):**
+*   **`POST /schedule-email`**：定时发送邮件
+    *   **请求体(JSON)**：
         ```json
         {
           "email": "recipient@example.com",
-          "message": "Your message to your future self!",
-          "sendDate": "YYYY-MM-DDTHH:mm:ss.sssZ" // ISO 8601 date string for the future send time
+          "message": "给未来的自己的消息！",
+          "sendDate": "YYYY-MM-DDTHH:mm:ss.sssZ" // 未来发送时间的ISO 8601日期字符串
         }
         ```
-    *   **Success Response (200 OK):**
+    *   **成功响应(200 OK)**：
         ```json
         {
           "success": true,
-          "emailId": "generated-unique-id",
-          "message": "Email scheduled successfully."
+          "emailId": "生成的唯一ID",
+          "message": "邮件定时发送成功"
         }
         ```
-    *   **Error Responses (400 or 500):**
+    *   **错误响应(400或500)**：
         ```json
         {
-          "error": "Error message describing the issue."
+          "error": "描述问题的错误信息"
         }
         ```
 
-## Data Encryption
+## 数据加密
 
-**CRITICAL**: The current encryption/decryption functions in `src/index.js` are **placeholders and NOT secure for production**. You MUST replace them with a robust implementation using the Web Crypto API directly or a library designed for this purpose, such as `encrypt-workers-kv` ([GitHub](https://github.com/bradyjoslin/encrypt-workers-kv)).
+**关键**：`src/index.js`中当前的加密/解密函数是**占位符，生产环境不安全**。必须使用Web Crypto API直接实现或使用专为此设计的库（如`encrypt-workers-kv`([GitHub](https://github.com/bradyjoslin/encrypt-workers-kv))）替换它们
 
-Ensure your `ENCRYPTION_SECRET` is strong and kept confidential.
+确保`ENCRYPTION_SECRET`足够强且保密
 
-## GitHub Actions for CI/CD (Optional)
+## GitHub Actions CI/CD（可选）
 
-To automate deployment with GitHub Actions:
+使用GitHub Actions自动化部署：
 
-1.  Create a `.github/workflows` directory in your main project root (not inside `cloudflare-worker` if it's a sub-directory).
-2.  Add a workflow YAML file (e.g., `deploy-worker.yml`) to this directory.
-3.  Configure Cloudflare API Token as a secret in your GitHub repository settings (e.g., `CF_API_TOKEN`).
-4.  The workflow would typically run `npm install` and `npx wrangler deploy` in the `cloudflare-worker` directory.
+1.  在主项目根目录（如果是子目录则不在`cloudflare-worker`内）创建`.github/workflows`目录
+2.  向该目录添加工作流YAML文件（如`deploy-worker.yml`）
+3.  在GitHub仓库设置中将Cloudflare API Token配置为密钥（如`CF_API_TOKEN`）
+4.  工作流通常会在`cloudflare-worker`目录运行`npm install`和`npx wrangler deploy`
 
-Example `deploy-worker.yml`:
+示例`deploy-worker.yml`：
 
 ```yaml
-name: Deploy Cloudflare Worker
+name: 部署Cloudflare Worker
 
 on:
   push:
     branches:
-      - main # Or your deployment branch
+      - main # 或你的部署分支
     paths:
-      - 'cloudflare-worker/**' # Only run if worker code changes
+      - 'cloudflare-worker/**' # 仅当worker代码变更时运行
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy Worker
+    name: 部署Worker
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Node.js
+      - name: 设置Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Or your preferred Node.js version
+          node-version: '18' # 或你偏好的Node.js版本
 
-      - name: Install Wrangler
+      - name: 安装Wrangler
         run: npm install --save-dev wrangler
-        working-directory: ./cloudflare-worker # Adjust if your worker is in a different subdir
+        working-directory: ./cloudflare-worker # 如果worker在不同子目录请调整
 
-      - name: Deploy Worker
+      - name: 部署Worker
         run: npx wrangler deploy
-        working-directory: ./cloudflare-worker # Adjust path
+        working-directory: ./cloudflare-worker # 调整路径
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }} # Also add your account ID as a secret
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }} # 同时将账号ID添加为密钥
 ```
 
-Remember to add `CF_ACCOUNT_ID` as a secret in your GitHub repository as well.
+记得在GitHub仓库中也添加`CF_ACCOUNT_ID`作为密钥
 
-## Further Considerations
+## 其他注意事项
 
-*   **Error Handling & Retries**: Enhance the cron job to handle Resend API failures more gracefully (e.g., retry logic, dead-letter queue).
-*   **Logging**: Add more detailed logging, potentially integrating with Cloudflare Logpush.
-*   **Scalability**: KV is highly scalable for reads. For very high write volumes to `/schedule-email`, consider potential rate limiting or batching if it becomes an issue.
-*   **Security**: Beyond encryption, ensure proper input validation and consider other security best practices for your Worker.
-*   **Idempotency**: Ensure that if a cron job runs multiple times for the same email (e.g., due to an error and retry), it doesn't send the email multiple times. The current status check helps with this.
+*   **错误处理与重试**：增强cron作业以更优雅地处理Resend API失败（如重试逻辑、死信队列）
+*   **日志**：添加更详细的日志，可能与Cloudflare Logpush集成
+*   **可扩展性**：KV对读取高度可扩展。对于`/schedule-email`的高写入量，如果成为问题，考虑速率限制或批处理
+*   **安全性**：除加密外，确保适当的输入验证并考虑Worker的其他安全最佳实践
+*   **幂等性**：确保如果cron作业对同一封邮件运行多次（如因错误和重试），不会多次发送邮件。当前的状态检查有助于此

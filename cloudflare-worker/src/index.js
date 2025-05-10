@@ -208,7 +208,7 @@ export default {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: '祝你快乐 <happy@pxt.dpdns.org>', // Using 'happy' prefix and sender name '祝你快乐'
+            from: `祝你快乐 <${env.VERIFICATION_EMAIL}>`, // 从环境变量获取发送邮箱
             to: [email],
             subject: '【祝你快乐】邮箱验证码',
             html: verificationEmailHtml,
@@ -370,7 +370,7 @@ export default {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: 'FROM 2025 <from2025@pxt.dpdns.org>', // TODO: Replace with your verified Resend domain/email
+                from: `FROM 2025 <${env.SENDER_EMAIL}>`, // 从环境变量获取发送邮箱
                 to: [emailData.to],
                 subject: emailData.subject,
                 html: emailData.html,
