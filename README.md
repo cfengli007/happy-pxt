@@ -14,7 +14,8 @@
 2. 配置Nginx (参考nginx/default.conf)
 3. 启动Nginx:
    ```bash
-   d:\birthday\nginx_win\nginx-1.24.0\nginx.exe -p d:\birthday\nginx_win\nginx-1.24.0
+   nginx.exe -p ./nginx_win/nginx-1.24.0
+   # 注意：请根据实际安装位置调整路径，确保nginx.exe在系统PATH中或使用完整路径
    ```
 4. 访问: http://localhost:8080
 
