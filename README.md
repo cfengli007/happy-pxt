@@ -21,12 +21,11 @@
 ## Cloudflare Worker部署
 
 ### 一键部署
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cfengli007/happy-pxt/tree/main/cloudflare-worker)
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/${GITHUB_REPOSITORY_OWNER}/happy-pxt/tree/main/cloudflare-worker)
 
 ### 手动部署
 1. 安装Wrangler CLI: `npm install -g @cloudflare/wrangler`
 2. 发布Worker: `wrangler publish`
-
 
 ## 环境变量
 - `ENCRYPTION_SECRET`: 数据加密密钥(32位以上随机字符串)
