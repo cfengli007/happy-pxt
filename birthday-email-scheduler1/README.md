@@ -58,16 +58,52 @@ cloudflare-worker/
     *   Wrangler会输出命名空间的`id`，复制此ID
     *   将复制的`id`粘贴到`wrangler.toml`中的`SCHEDULED_EMAILS_KV`绑定，替换`YOUR_KV_NAMESPACE_ID`
 
-6.  **设置Resend API密钥和加密密钥**：
-    *   **RESEND_API_KEY**：来自Resend的API密钥
+6.  **设置环境变量**：
+    *   **RESEND_API_KEY**（必需）：来自Resend的API密钥，用于发送邮件
         ```bash
         npx wrangler secret put RESEND_API_KEY
         ```
         （Wrangler会提示输入密钥值）
-    *   **ENCRYPTION_SECRET**：用于KV数据加密/解密的强唯一密钥字符串。生成安全的随机字符串
+    *   **ENCRYPTION_SECRET**（必需）：用于KV数据加密/解密的强唯一密钥字符串。建议使用以下命令生成安全随机字符串：
+        ```bash
+        node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+        ```
+        然后设置密钥：
         ```bash
         npx wrangler secret put ENCRYPTION_SECRET
         ```
+    *   **FROM_EMAIL**（可选）：默认发件人邮箱地址，格式为"显示名称 <email@example.com>"。如果未设置，将使用代码中的默认值
+        ```bash
+        npx wrangler secret put FROM_EMAIL
+        ```
+    *   **DEV_MODE**（可选）：设置为"true"时启用开发模式，会跳过实际邮件发送
+        ```bash
+        npx wrangler secret put DEV_MODE
+        ```
+
+    **重要提示**：
+    - 所有密钥设置后会自动加密存储
+    - 本地开发时可以在`.dev.vars`文件中设置这些变量（该文件被git忽略）
+    - 生产环境必须确保`ENCRYPTION_SECRET`足够强且保密
+        node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+        ```
+        然后设置密钥：
+        ```bash
+        npx wrangler secret put ENCRYPTION_SECRET
+        ```
+    *   **FROM_EMAIL**（可选）：默认发件人邮箱地址，格式为"显示名称 <email@example.com>"。如果未设置，将使用代码中的默认值
+        ```bash
+        npx wrangler secret put FROM_EMAIL
+        ```
+    *   **DEV_MODE**（可选）：设置为"true"时启用开发模式，会跳过实际邮件发送
+        ```bash
+        npx wrangler secret put DEV_MODE
+        ```
+    
+    **重要提示**：
+    - 所有密钥设置后会自动加密存储
+    - 本地开发时可以在`.dev.vars`文件中设置这些变量（该文件被git忽略）
+    - 生产环境必须确保`ENCRYPTION_SECRET`足够强且保密
         **重要**：`src/index.js`中的当前加密是占位符。生产环境必须使用Web Crypto API或类似`encrypt-workers-kv`的库实现强加密
 
 7.  **更新邮件`from`地址**：
