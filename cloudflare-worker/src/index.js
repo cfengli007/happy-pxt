@@ -29,49 +29,11 @@ function generateId() {
 // Placeholder for encryption/decryption functions
 // In a real application, use a robust library like 'encrypt-workers-kv' or Web Crypto API
 async function encryptData(data, secret) {
-  // TODO: Implement actual encryption. This is a placeholder.
-  // For demonstration, we'll just prepend a string. Replace with real encryption.
-  // const iv = crypto.getRandomValues(new Uint8Array(12));
-  // const key = await crypto.subtle.importKey(
-  //   "raw",
-  //   new TextEncoder().encode(secret.padEnd(32, '0').substring(0,32)), // Ensure 32-byte key
-  //   { name: "AES-GCM", length: 256 },
-  //   false,
-  //   ["encrypt"]
-  // );
-  // const encodedData = new TextEncoder().encode(JSON.stringify(data));
-  // const encryptedContent = await crypto.subtle.encrypt(
-  //   { name: "AES-GCM", iv: iv },
-  //   key,
-  //   encodedData
-  // );
-  // const encryptedPackage = new Uint8Array(iv.length + encryptedContent.byteLength);
-  // encryptedPackage.set(iv);
-  // encryptedPackage.set(new Uint8Array(encryptedContent), iv.length);
-  // return btoa(String.fromCharCode.apply(null, encryptedPackage)); // Store as base64 string
   console.warn("Using placeholder encryption. Implement robust encryption for production.");
   return `encrypted_${secret}_${JSON.stringify(data)}`;
 }
 
 async function decryptData(encryptedDataString, secret) {
-  // TODO: Implement actual decryption. This is a placeholder.
-  // For demonstration, we'll just remove the prepended string. Replace with real decryption.
-  // const encryptedPackage = new Uint8Array(atob(encryptedDataString).split('').map(char => char.charCodeAt(0)));
-  // const iv = encryptedPackage.slice(0, 12);
-  // const encryptedContent = encryptedPackage.slice(12);
-  // const key = await crypto.subtle.importKey(
-  //   "raw",
-  //   new TextEncoder().encode(secret.padEnd(32, '0').substring(0,32)),
-  //   { name: "AES-GCM", length: 256 },
-  //   false,
-  //   ["decrypt"]
-  // );
-  // const decryptedContent = await crypto.subtle.decrypt(
-  //   { name: "AES-GCM", iv: iv },
-  //   key,
-  //   encryptedContent
-  // );
-  // return JSON.parse(new TextDecoder().decode(decryptedContent));
   console.warn("Using placeholder decryption. Implement robust encryption for production.");
   const prefix = `encrypted_${secret}_`;
   if (encryptedDataString.startsWith(prefix)) {
@@ -129,52 +91,7 @@ export default {
           return jsonResponse({ error: 'Invalid email format' }, 400);
         }
 
-        const birthdayWishes = [
-  // 现代温馨
-  "愿你笑容常在，幸福满怀！",
-  "祝你岁岁平安，年年有余！",
-  "愿你的每一天都充满阳光和喜悦！",
-  "生日快乐，愿你梦想成真！",
-  "祝你青春永驻，活力无限！",
-  "愿你的生活如诗如画，美好无限！",
-  "祝你健康快乐，万事如意！",
-  "愿你的未来更加辉煌灿烂！",
-  "生日快乐，愿你被爱包围！",
-  "祝你笑口常开，好运自然来！",
-  "愿你心中有光，脚下有路！",
-  "愿你所遇皆温柔，所行化坦途！",
-  "愿你被世界温柔以待，快乐常伴！",
-  "愿你前程似锦，所愿皆成真！",
-  "愿你一切顺遂，笑对人生！",
-  "愿你健康平安，幸福久久！",
-  "愿你拥有诗和远方，也有温暖的家！",
-  "愿你每一天都闪闪发光！",
-  "愿你不负时光，不负自己！",
-  // 古风诗意
-  "愿君安好，岁月无忧，春风得意马蹄疾！",
-  "愿你如松柏长青，似明月恒久，安然自在！",
-  "愿你前路锦绣，步步生花，心有繁星！",
-  "愿你眉眼如初，岁月如故，山河无恙！",
-  "愿你一世安然，万事顺遂，笑看风云！",
-  "愿卿此生无忧，笑看繁花似锦！",
-  "愿你如意安康，岁岁年年！",
-  "愿你锦衣夜行，星河长明！",
-  // 幽默俏皮
-  "愿你每天都能吃到喜欢的美食，遇到可爱的人！",
-  "愿你钱包鼓鼓，烦恼少少！",
-  "愿你快乐像长胖一样简单！",
-  "愿你永远18岁，快乐不打烊！",
-  // 励志正能量
-  "愿你勇敢追梦，不惧风雨！",
-  "愿你所求皆如愿，所行化坦途！",
-  "愿你眼里有光，心中有爱，脚下有路！",
-  "愿你披荆斩棘，终见彩虹！",
-  // 祝福多元
-  "愿你被世界温柔以待，愿你所遇皆美好！",
-  "愿你前路光明，身边有爱！",
-  "愿你健康常伴，幸福常随！",
-  "愿你笑对人生，心怀希望！"
-];
+        const birthdayWishes = JSON.parse(env.BIRTHDAY_WISHES);
         const randomWishAsCode = birthdayWishes[Math.floor(Math.random() * birthdayWishes.length)];
         const verificationKey = `verification:${email}`;
         const expiresAt = Date.now() + 10 * 60 * 1000; // Expires in 10 minutes
@@ -191,15 +108,7 @@ export default {
         await SCHEDULED_EMAILS_KV.put(verificationKey, encryptedVerificationData, { expiration: Math.floor(expiresAt / 1000) });
 
         // Send verification email via Resend
-        const verificationEmailHtml = `
-          <p>亲爱的朋友：</p>
-          <p>这里是我为你送上的生日祝福验证码：<strong>${randomWishAsCode}</strong></p>
-          <p>请将这条美好的祝福语作为验证码输入，以完成邮箱验证。它承载着我对你深深的祝福哦！</p>
-          <p>如果你没有进行这个操作，就当是我提前送上的一份小惊喜吧，不用理会就好。</p>
-          <p>愿你每天都开开心心！</p>
-          <p>你的朋友，</p>
-          <p>陈凤</p>
-        `;
+        const verificationEmailHtml = env.VERIFICATION_EMAIL_TEMPLATE.replace('${randomWishAsCode}', randomWishAsCode);
 
         const resendResponse = await fetch('https://api.resend.com/emails', {
           method: 'POST',
@@ -299,7 +208,7 @@ export default {
           id: emailId,
           to: email,
           subject: '来自2025的你的一封信！', // 中文邮件主题
-          html: `<p>亲爱的我：</p><p>你好呀！这是今年生日的我写给你的信：</p><blockquote>${message}</blockquote><p>愿你依然热爱生活，愿一切美好如约而至。</p><p>From The Past</p>`,
+          html: env.SCHEDULED_EMAIL_TEMPLATE.replace('${message}', message),
 
           scheduledTime: scheduledTime, // Already in UTC milliseconds
           status: 'pending', // pending, sent, failed

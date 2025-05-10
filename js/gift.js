@@ -12,8 +12,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // const persistentGiftIcon = document.getElementById('persistent-gift-icon'); // 这个也可能在主模块中处理或动态创建
     let giftTriggered = false; // 默认值
     const giftTriggeredKey = 'gift_triggered_status'; // localStorage key
-    const giftLink = ''; // 弹窗中“接受礼物”按钮的链接
-    const persistentGiftIconLink = ''; // 用户指定的常驻礼物图标的独立链接
+fetch('/config.json')
+  .then(res => res.json())
+  .then(data => {
+    const config = data;
+    // 后续使用 config 的代码原本在外部，这里需要调整逻辑将后续使用 config 的代码移到这个回调中
+    const giftLink = config.giftLink; // 弹窗中“接受礼物”按钮的链接
+    const persistentGiftIconLink = config.persistentGiftIconLink; // 用户指定的常驻礼物图标的独立链接
+    // 其他依赖 config 的代码可以继续添加在这里
+  })
+  .catch(error => {
+    console.error('获取配置文件时出错:', error);
+  });
+    const giftLink = config.giftLink; // 弹窗中“接受礼物”按钮的链接
+    const persistentGiftIconLink = config.persistentGiftIconLink; // 用户指定的常驻礼物图标的独立链接
     const targetLyricForGift = "潺潺流水终于穿过了群山一座座"; // 这个可能需要从主模块传入或共享
 
     // 页面加载时初始化 giftTriggered 状态

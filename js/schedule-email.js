@@ -29,7 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const qqLoginCancelBtnMobile = document.getElementById('qq-login-cancel-btn-mobile');
 
     // Cloudflare Worker 的 URL
-    const baseWorkerUrl = 'https://pxt1.sanyi.us.kg';
+let config;
+fetch('/config.json')
+  .then(res => res.json())
+  .then(data => {
+    config = data;
+    // 后续依赖 config 的代码可以在这里继续执行，不过原代码里后续逻辑需要调整到这里
+    const baseWorkerUrl = config.baseWorkerUrl;
+    const sendVerificationEmailUrl = `${baseWorkerUrl}/send-verification-email`;
+    const verifyEmailUrl = `${baseWorkerUrl}/verify-email`;
+    const scheduleEmailUrl = `${baseWorkerUrl}/schedule-email`;
+    // 其他依赖 config 的逻辑...
+  })
+  .catch(error => {
+    console.error('获取配置文件失败:', error);
+  });
+    const baseWorkerUrl = config.baseWorkerUrl;
     const sendVerificationEmailUrl = `${baseWorkerUrl}/send-verification-email`;
     const verifyEmailUrl = `${baseWorkerUrl}/verify-email`;
     const scheduleEmailUrl = `${baseWorkerUrl}/schedule-email`;

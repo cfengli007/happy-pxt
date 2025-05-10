@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const qqLoginCancelBtnMobile = document.getElementById('qq-login-cancel-btn-mobile');
 
     // Cloudflare Worker 的 URL
-    const baseWorkerUrl = 'https://px1.sanyi.us.kg'; // 请确保这个URL是正确的测试环境URL
+    const baseWorkerUrl = ''; // 使用与正式环境相同的URL
     const sendVerificationEmailUrl = `${baseWorkerUrl}/send-verification-email`;
     const verifyEmailUrl = `${baseWorkerUrl}/verify-email`;
     const scheduleEmailUrl = `${baseWorkerUrl}/schedule-email`;
