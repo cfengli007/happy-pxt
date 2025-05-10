@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>测试定时邮件</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <section id="email-scheduler">
+            <h2>未来的约定</h2>
+            <p>在未来的某一天，收到一份来自此刻的祝福，会不会很惊喜？</p>
+            <form id="schedule-form">
+                <div class="form-group">
+                    <label for="email">你的邮箱：</label>
+                    <input type="email" id="email" name="email" required placeholder="请输入你的邮箱地址">
+                </div>
+                <div class="form-group email-verification-trigger-area">
+                     <button type="button" id="trigger-verification-modal" class="btn-secondary">点击验证邮箱</button>
+                     <a href="https://mail.qq.com" target="_blank" class="email-provider-link">没有邮箱？用QQ邮箱</a>
+                </div>
+                 <div class="form-group" style="display: none;"> 
+                    <input type="checkbox" id="email-verified-checkbox" disabled>
+                    <label for="email-verified-checkbox" id="email-verified-label">邮箱未验证</label>
+                </div>
+                <div class="form-group">
+                    <label for="self-message">想对自己说的话：</label>
+                    <textarea id="self-message" name="self-message" rows="3" required placeholder="写下此刻的心情或对未来的期许吧！"></textarea>
+                </div>
+                <div id="scheduled-date-display" class="status-info"></div>
+                <button type="submit" id="send-btn" class="btn-primary">定时发送祝福</button>
+                <p id="status-message"></p>
+            </form>
+            <p class="tip">* 你的话将在 10 秒后自动寄出（由 Cloudflare Workers + Resend 邮件服务实现）</p>
+            <p class="tip tip-secure">请放心，全自动流程，所有信息均加密，本开发者也看不到。</p>
+        </section>
+
+        <footer>
+            <p>这是一个测试页面，用于测试定时邮件功能。</p>
+            <p class="footer-note">© <span id="current-year"></span> 测试页面</p>
+        </footer>
+    </div>
+
+    <!-- 邮箱验证模态框 -->
+    <div id="verification-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-verification-modal">&times;</span>
+            <h3>验证你的邮箱</h3>
+            <p>我们将向 <strong id="modal-email-display"></strong> 发送一封验证邮件。</p>
+            <div class="form-group">
+                <button type="button" id="send-verification-code" class="btn-primary">发送验证码</button>
+            </div>
+            <div class="form-group">
+                <label for="verification-code">验证码：</label>
+                <input type="text" id="verification-code" placeholder="请输入收到的验证码">
+            </div>
+            <div class="form-group">
+                <button type="button" id="verify-code" class="btn-primary">确认验证</button>
+            </div>
+            <p id="verification-status"></p>
+        </div>
+    </div>
+
+    <!-- QQ Login Confirmation Modal (Mobile) -->
+    <div id="qq-login-modal-mobile" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-qq-login-modal-mobile">&times;</span>
+            <h3>提示</h3>
+            <p>如果您没有其他邮箱，也没用过QQ邮箱需要登录一下才能用，点击确认跳转登陆网页，登陆后记得回来。否则点取消。</p>
+            <div class="button-container">
+                <button type="button" id="qq-login-cancel-btn-mobile" class="btn-secondary">取消</button>
+                <button type="button" id="qq-login-confirm-btn-mobile" class="btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentYearElement = document.getElementById('current-year');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+    <script src="js/solarlunar.js"></script>
+    <script src="js/test-scheduled-email.js"></script>
+</body>
+</html>

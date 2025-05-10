@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>生日快乐！</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/custom-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎂 生日快乐！🎂</h1>
+            <p class="subtitle">愿你每一天都充满阳光和喜悦！</p>
+        </header>
+
+        <section id="greeting-card">
+            <h2>特别的祝福，给特别的你</h2>
+            <p>亲爱的彭，</p>
+            <p>今天，是属于你的特别时刻。愿你被温柔以待，被世界宠爱。愿你心中有光，脚下有路，身边有爱。</p>
+            <p>愿你的每一个梦想都能被点亮，每一份努力都不被辜负。无论未来多远，都有温暖与希望与你同行。</p>
+            <p>生日快乐，愿你永远被爱包围，笑容常在！</p>
+        </section>
+
+        <section id="music-player-section">
+            <h2 style="display: flex; align-items: center; justify-content: center; position: relative; text-align: center;">
+                <span>一程山水·毛不易</span>
+                <div id="gift-icon-container" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center;">
+                    <i id="persistent-gift-icon" class="custom-bi-gift" style="font-size: 20px; cursor: pointer; color: #ff8c94;"></i>
+                    <button id="clear-gift-log-btn" title="清除礼物记录" style="background: none; border: none; cursor: pointer; padding: 0; margin-left: 10px; color: #333;">
+                        <i class="bi bi-x-circle" style="font-size: 20px;"></i>
+                    </button>
+                </div>
+            </h2>
+            <div id="music-player">
+                <div id="waveform-mobile"></div>
+            </div>
+            <div id="lyrics-container-mobile" class="lyrics-container-mobile">
+                <!-- 歌词将显示在这里 -->
+            </div>
+        </section>
+
+        <section id="email-scheduler">
+            <h2>未来的约定</h2>
+            <p>在未来的某一天，收到一份来自此刻的祝福，会不会很惊喜？</p>
+            <form id="schedule-form">
+                <div class="form-group">
+                    <label for="email">你的邮箱：</label>
+                    <input type="email" id="email" name="email" required placeholder="请输入你的邮箱地址">
+                </div>
+                <div class="form-group email-verification-trigger-area">
+                     <button type="button" id="trigger-verification-modal" class="btn-secondary">点击验证邮箱</button>
+                     <a href="https://mail.qq.com" target="_blank" class="email-provider-link">没有邮箱？用QQ邮箱</a>
+                </div>
+                 <div class="form-group" style="display: none;"> 
+                    <input type="checkbox" id="email-verified-checkbox" disabled>
+                    <label for="email-verified-checkbox" id="email-verified-label">邮箱未验证</label>
+                </div>
+                <div class="form-group">
+                    <label for="self-message">想对自己说的话：</label>
+                    <textarea id="self-message" name="self-message" rows="3" required placeholder="写下此刻的心情或对未来的期许吧！"></textarea>
+                </div>
+                <div id="scheduled-date-display" class="status-info"></div>
+                <button type="submit" id="send-btn" class="btn-primary" style="display: block; margin-left: auto; margin-right: auto;">定时发送祝福</button>
+                <p id="status-message"></p>
+            </form>
+            <p class="tip">* 你的话将在明年今日自动寄出（由 Cloudflare Workers + Resend 邮件服务实现）</p>
+            <p class="tip tip-secure">请放心，全自动流程，所有信息均加密，本开发者也看不到。</p>
+        </section>
+
+        <footer>
+            <p>灵感来自毛不易《一程山路》 · 祝你前路温柔，岁岁平安</p>
+            <p class="footer-note">© <span id="current-year">2025</span> 生日祝福 · 设计与开发 by Trae AI</p>
+        </footer>
+    </div>
+
+    <!-- 邮箱验证模态框 -->
+    <div id="verification-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-verification-modal">&times;</span>
+            <h3>验证你的邮箱</h3>
+            <p>我们将向 <strong id="modal-email-display"></strong> 发送一封验证邮件。</p>
+            <div class="form-group">
+                <button type="button" id="send-verification-code" class="btn-primary">发送验证码</button>
+            </div>
+            <div class="form-group">
+                <label for="verification-code">验证码：</label>
+                <input type="text" id="verification-code" placeholder="请输入收到的验证码">
+            </div>
+            <div class="form-group">
+                <button type="button" id="verify-code" class="btn-primary">确认验证</button>
+            </div>
+            <p id="verification-status"></p>
+        </div>
+    </div>
+
+    <!-- QQ Login Confirmation Modal (Mobile) -->
+    <div id="qq-login-modal-mobile" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-qq-login-modal-mobile">&times;</span>
+            <h3>提示</h3>
+            <p>如果您没有其他邮箱，也没用过QQ邮箱需要登录一下才能用，点击确认跳转登陆网页，登陆后记得回来。否则点取消。</p>
+            <div class="button-container">
+                <button type="button" id="qq-login-cancel-btn-mobile" class="btn-secondary">取消</button>
+                <button type="button" id="qq-login-confirm-btn-mobile" class="btn-primary">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 礼物弹窗模态框 -->
+    <div id="gift-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-gift-modal">&times;</span>
+            <h3>🎁 一份特别的礼物！🎁</h3>
+            <p>送你这首歌，愿它能带给你温暖和力量！（QQ音乐）</p>
+            <div class="button-container gift-button-container">
+                <button type="button" id="gift-cancel-btn" class="btn btn-secondary gift-modal-button">不了，谢谢</button>
+                <button type="button" id="gift-confirm-btn" class="btn btn-primary gift-modal-button">接收礼物</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ensure this script runs after the 'current-year' element is in the DOM
+        // Best practice is to place scripts at the end of the body or use DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentYearElement = document.getElementById('current-year');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+    <script src="js/wavesurfer.min.js"></script>
+    <script src="js/solarlunar.js"></script>
+    <script src="js/schedule-email.js"></script>
+    <script src="js/gift.js"></script>
+    <script src="js/lyrics.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

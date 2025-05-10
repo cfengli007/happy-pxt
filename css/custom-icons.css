@@ -1,0 +1,17 @@
+/* Custom gift icon */
+.custom-bi-gift::before {
+  content: url("./svg/gift.svg"); /* Path relative to custom-icons.css */
+  /* Adjust vertical-align or other properties for proper display */
+  display: inline-block; /* Ensure it behaves like other bi icons */
+  font-family: bootstrap-icons !important; /* Inherit font properties if needed, though content:url bypasses this for the icon itself */
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: -0.125em; /* Align with other bootstrap icons */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 1em; /* Ensure it takes up space, adjust as needed */
+  height: 1em; /* Ensure it takes up space, adjust as needed */
+}
