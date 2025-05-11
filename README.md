@@ -32,6 +32,21 @@
 | ENCRYPTION_SECRET | 加密KV存储数据 | 32位以上随机字符串 |
 | VERIFICATION_EMAIL | 发送验证码邮箱 | 已验证的Resend邮箱 |
 
+## 使用的开源组件
+
+- **[Node.js](https://nodejs.org/)**: JavaScript运行时环境 (MIT License)
+- **[wrangler](https://github.com/cloudflare/wrangler2)**: Cloudflare Workers开发工具 (MIT License)
+- **[bootstrap-icons](https://github.com/twbs/icons)**: Bootstrap图标库 (MIT License)
+- **[wavesurfer.js](https://github.com/katspaugh/wavesurfer.js)**: 音频波形可视化库 (BSD 3-Clause License)
+- **[OpenSSL](https://www.openssl.org/)**: 加密工具包 (OpenSSL License)
+- **[PCRE](http://www.pcre.org/)**: 正则表达式库 (BSD License)
+- **[nginx](https://nginx.org/)**: Web服务器 (BSD License)
+- **[zlib](https://zlib.net/)**: 数据压缩库 (zlib License)
+
+## 许可证
+
+本项目使用MIT许可证，完整文本请参见[LICENSE](./LICENSE)文件。
+
 ## 注意事项
 - 生产环境请确保Nginx配置正确
 - Worker部署前请测试本地功能

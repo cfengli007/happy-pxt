@@ -82,6 +82,45 @@ npx wrangler dev
 ```
 
 ### API端点
+
+#### 1. 发送验证邮件
+- **`POST /send-verification-email`**：发送验证邮件到指定邮箱
+
+请求示例：
+```json
+{
+  "email": "recipient@example.com"
+}
+```
+
+响应示例：
+```json
+{
+  "success": true,
+  "message": "验证邮件已发送，请检查您的收件箱。"
+}
+```
+
+#### 2. 验证邮箱
+- **`POST /verify-email`**：验证邮箱和验证码
+
+请求示例：
+```json
+{
+  "email": "recipient@example.com",
+  "code": "验证祝福语"
+}
+```
+
+响应示例：
+```json
+{
+  "success": true,
+  "message": "邮箱验证成功！祝福已送达！"
+}
+```
+
+#### 3. 定时发送邮件
 - **`POST /schedule-email`**：定时发送邮件
 
 请求示例：
@@ -90,6 +129,14 @@ npx wrangler dev
   "email": "recipient@example.com",
   "message": "给未来的自己的消息！",
   "sendDate": "YYYY-MM-DDTHH:mm:ss.sssZ"
+}
+```
+
+响应示例：
+```json
+{
+  "success": true,
+  "message": "邮件已成功安排，将在指定时间发送。"
 }
 ```
 
@@ -120,6 +167,10 @@ jobs:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
 ```
+
+## 开源组件
+- [@cloudflare/wrangler](https://github.com/cloudflare/wrangler): Apache-2.0
+
 
 ## 最佳实践
 - **错误处理**：实现指数退避重试机制
