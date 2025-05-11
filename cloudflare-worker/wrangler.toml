@@ -13,10 +13,17 @@ VERIFICATION_EMAIL = "${VERIFICATION_EMAIL}" # 发送验证码的邮箱地址
 ENCRYPTION_SECRET = "${ENCRYPTION_SECRET}" # 数据加密密钥(32位以上随机字符串)
 RESEND_API_KEY = "${RESEND_API_KEY}" # Resend邮件服务API密钥
 
+# Email sender names and subjects
+VERIFICATION_SENDER_NAME = "祝你快乐" # 验证邮件发件人名称
+SCHEDULED_SENDER_NAME = "FROM 2025" # 定时邮件发件人名称
+VERIFICATION_EMAIL_SUBJECT = "【祝你快乐】邮箱验证码" # 验证邮件主题
+SCHEDULED_EMAIL_SUBJECT = "来自2025的你的一封信！" # 定时邮件主题
+
 # You can define environment variables here if needed, but secrets are better for sensitive data
 
 # Birthday wishes and email templates
 BIRTHDAY_WISHES = """[
+  "159633"
 ]"""
 
 VERIFICATION_EMAIL_TEMPLATE = """

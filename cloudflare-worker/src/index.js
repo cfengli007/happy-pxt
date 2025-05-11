@@ -117,9 +117,9 @@ export default {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: `祝你快乐 <${env.VERIFICATION_EMAIL}>`, // 从环境变量获取发送邮箱
+            from: `${env.VERIFICATION_SENDER_NAME || '祝你快乐'} <${env.VERIFICATION_EMAIL}>`, // 从环境变量获取发送邮箱
             to: [email],
-            subject: '【祝你快乐】邮箱验证码',
+            subject: env.VERIFICATION_EMAIL_SUBJECT || '【祝你快乐】邮箱验证码',
             html: verificationEmailHtml,
           }),
         });
@@ -207,7 +207,7 @@ export default {
         const emailData = {
           id: emailId,
           to: email,
-          subject: '来自2025的你的一封信！', // 中文邮件主题
+          subject: env.SCHEDULED_EMAIL_SUBJECT || '来自2025的你的一封信！', // 中文邮件主题
           html: env.SCHEDULED_EMAIL_TEMPLATE.replace('${message}', message),
 
           scheduledTime: scheduledTime, // Already in UTC milliseconds
@@ -279,7 +279,7 @@ export default {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: `FROM 2025 <${env.SENDER_EMAIL}>`, // 从环境变量获取发送邮箱
+                from: `${env.SCHEDULED_SENDER_NAME || 'FROM 2025'} <${env.SENDER_EMAIL}>`, // 从环境变量获取发送邮箱
                 to: [emailData.to],
                 subject: emailData.subject,
                 html: emailData.html,

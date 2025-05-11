@@ -48,17 +48,21 @@ npx wrangler kv:namespace create SCHEDULED_EMAILS_KV
 ### 环境变量
 | 变量名 | 描述 | 示例值 | 是否必需 |
 |--------|------|--------|---------|
-| RESEND_API_KEY | Resend API密钥，用于发送邮件 | re_1234567890abcdef | 是 |
-| ENCRYPTION_SECRET | 加密密钥，用于加密存储的邮件数据 | base64编码字符串 | 是 |
-| VERIFICATION_EMAIL | 验证邮件发件人邮箱 | your-verified-email@domain.com | 是 |
 | BIRTHDAY_WISHES | 生日祝福语列表，JSON格式，用作验证码 | ["祝福语1","祝福语2"] | 是 |
-| VERIFICATION_EMAIL_TEMPLATE | 验证邮件HTML模板 | `<html>...</html>` | 是 |
-| SENDER_EMAIL | 发送邮件的邮箱地址 | sender@example.com | 是 |
+| ENCRYPTION_SECRET | 加密密钥，用于加密存储的邮件数据 | base64编码字符串 | 是 |
+| RESEND_API_KEY | Resend API密钥，用于发送邮件 | re_1234567890abcdef | 是 |
 | SCHEDULED_EMAIL_TEMPLATE | 定时邮件HTML模板 | `<html>...</html>` | 是 |
+| SCHEDULED_SENDER_NAME | 定时邮件发件人名称 | "FROM 2025" | 否 |
+| SCHEDULED_EMAIL_SUBJECT | 定时邮件主题 | "来自2025的你的一封信！" | 否 |
+| SENDER_EMAIL | 发送定时邮件的邮箱地址 | sender@example.com | 是 |
+| VERIFICATION_EMAIL | 验证邮件发件人邮箱 | your-verified-email@domain.com | 是 |
+| VERIFICATION_EMAIL_TEMPLATE | 验证邮件HTML模板 | `<html>...</html>` | 是 |
+| VERIFICATION_SENDER_NAME | 验证邮件发件人名称 | "祝你快乐" | 否 |
+| VERIFICATION_EMAIL_SUBJECT | 验证邮件主题 | "【祝你快乐】邮箱验证码" | 否 |
 
 **注意：**
 1. 所有变量都必须在wrangler.toml中配置绑定或通过`wrangler secret put`设置
-2. VERIFICATION_EMAIL必须是Resend账户中已验证的邮箱
+2. EMAIL必须是Resend账户中已验证的邮箱
 3. ENCRYPTION_SECRET建议使用`openssl rand -base64 32`生成
 
 设置方式：
