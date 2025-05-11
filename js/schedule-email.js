@@ -29,25 +29,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const qqLoginCancelBtnMobile = document.getElementById('qq-login-cancel-btn-mobile');
 
     // Cloudflare Worker 的 URL
-let config;
-fetch('/config.json')
-  .then(res => res.json())
-  .then(data => {
-    config = data;
-    // 后续依赖 config 的代码可以在这里继续执行，不过原代码里后续逻辑需要调整到这里
-    const baseWorkerUrl = config.baseWorkerUrl;
-    const sendVerificationEmailUrl = `${baseWorkerUrl}/send-verification-email`;
-    const verifyEmailUrl = `${baseWorkerUrl}/verify-email`;
-    const scheduleEmailUrl = `${baseWorkerUrl}/schedule-email`;
-    // 其他依赖 config 的逻辑...
-  })
-  .catch(error => {
-    console.error('获取配置文件失败:', error);
-  });
-    const baseWorkerUrl = config.baseWorkerUrl;
-    const sendVerificationEmailUrl = `${baseWorkerUrl}/send-verification-email`;
-    const verifyEmailUrl = `${baseWorkerUrl}/verify-email`;
-    const scheduleEmailUrl = `${baseWorkerUrl}/schedule-email`;
+    let baseWorkerUrl;
+    let sendVerificationEmailUrl;
+    let verifyEmailUrl;
+    let scheduleEmailUrl;
+    
+    // 从config.json加载配置
+    fetch('../config.json')
+        .then(response => response.json())
+        .then(config => {
+            if (config.baseWorkerUrl) {
+                baseWorkerUrl = config.baseWorkerUrl.endsWith('/') ? config.baseWorkerUrl.slice(0, -1) : config.baseWorkerUrl;
+                sendVerificationEmailUrl = `${baseWorkerUrl}/send-verification-email`;
+                verifyEmailUrl = `${baseWorkerUrl}/verify-email`;
+                scheduleEmailUrl = `${baseWorkerUrl}/schedule-email`;
+            } else {
+                console.error('配置错误: config.json中缺少baseWorkerUrl');
+            }
+        })
+        .catch(error => {
+            console.error('加载配置错误:', error);
+        });
 
     // Event listener for triggering the modal
     if (triggerVerificationModalButton) {
